@@ -1,0 +1,84 @@
+<resources>
+    <string name="app_name">noonpay samsung pay app</string>
+    <!-- Titles -->
+    <string name="sample_merchant">noonpay Merchant</string>
+    <string name="amount">Total Amount</string>
+    <string name="order_no">Order No</string>
+    <string name="order_details">ORDER DETAILS</string>
+    <string name="product_price">Product Price</string>
+    <string name="tax_amount">VAT</string>
+    <string name="shipping_amount">Shipping Amount</string>
+    <string name="pay_button">Pay</string>
+
+    <!-- Alert strings -->
+    <string name="savedsheettype">savedSheetType</string>
+    <string name="go_to_samsung_pay_update_popuptitle">Go to Samsung Pay update</string>
+    <string name="go_to_samsung_pay_start_popuptitle">Go to Samsung Pay start</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="spay_not_supported">SPAY_NOT_SUPPORTED! (=Status value : 0 ) </string>
+    <string name="spay_not_ready">SPAY_NOT_READY! (=Status value : 1 ) </string>
+    <string name="spay_ready">SPAY_READY! (=Status value : 2 ) </string>
+
+    <!-- Address options on the Payment Sheet -->
+    <string name="parter_did_not_set_service_type">Partner did not set SERVICE TYPE</string>
+    <string name="getsamsungpaystatus_result">getSamsungPayStatus result : </string>
+
+    <!-- SDK Methodtest options -->
+    <string name="samsungpaysdkapitest"> Samsung Pay SDK Method Test</string>
+    <string name="getsamsungpaystatus">getSamsungPayStatus</string>
+    <string name="requestcardinfo">requestCardInfo</string>
+    <string name="activatesamsungpay">activateSamsungPay</string>
+    <string name="gotoupdatepage">goToUpdatePage</string>
+    <string name="plain_text_title">Plain Text [Title]</string>
+    <string name="plaintextcontrol_example">PlainTextControl example</string>
+    <string name="try_getsamsungpaystatus_api_call_before_doing_any_operation">Try getSamsungPayStatus API call before doing any operation.</string>
+
+    <string name="address_in_paymentsheet">ADDRESS ON THE PAYMENT SHEET</string>
+    <string name="shipping_address_title">SHIPPING ADDRESS</string>
+    <string name="customer_name">Name</string>
+    <string name="customer_name_hint">Enter Your Name</string>
+    <string name="addressline1">Address line 1</string>
+    <string name="addressline1_hint">PO BOX, Street Address</string>
+    <string name="addressline2">Address line 2</string>
+    <string name="addressline2_hint">PO BOX, Street Address</string>
+    <string name="city">City</string>
+    <string name="state">State/Province</string>
+    <string name="zipcode">Zip Code</string>
+    <string name="email">Email</string>
+    <string name="phonenumber">Phone Number</string>
+
+    <string name="select_your_country">Select Your Country</string>
+    <string name="country">Country</string>
+    <string name="countrycode">CountryCode</string>
+
+
+    <string name="name">name</string>
+    <string name="isfastcheckout">isFastCheckout</string>
+    <string name="payment_result"> - Payment Result - </string>
+    <string name="paymentcardbrand">PaymentCardBrand</string>
+    <string name="paymentcardlast4dpan">PaymentCardLast4DPAN</string>
+    <string name="paymentcardlast4fpan">PaymentCardLast4FPAN</string>
+    <string name="paymentcurrencycode">PaymentCurrencyCode</string>
+    <string name="paymentshippingaddress">PaymentShippingAddress</string>
+    <string name="paymentshippingmethod">PaymentShippingMethod</string>
+    <string name="enableenforcepaymentsheet">enableEnforcePaymentSheet</string>
+    <string name="enforce_payment_sheet">Enforce Payment Sheet</string>
+    <string name="payment_history">Payment History:</string>
+    <string name="fco_previous_addr_title">Shipping Address:</string>
+    <string name="fco_layout_title">Fast Checkout</string>
+    <string name="sheetpreferances">SheetPreferances</string>
+
+    <string name="installment_spinner_example">Installment</string>
+    <string name="shipping_method">Shipping Method</string>
+    <string name="standard_shipping_free">Standard Shipping (Free)</string>
+    <string name="twoday_shipping">Two-Day Shipping (0.1$)</string>
+    <string name="oneday_shipping">One-Day Shipping (0.2$)</string>
+    <string name="set_fco_info">Set Fco info:</string>
+    <string name="item">Item name</string>
+    <string name="tax">0.0</string>
+    <string name="shippingCost">0.0</string>
+    <string name="product_name">NOON27FEB01</string>
+    <string name="total_amount">0.0</string>
+    <string name="home">Home</string>
+</resources>
