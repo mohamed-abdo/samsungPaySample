@@ -1,5 +1,6 @@
 package com.noonpay.sample.samsungPay;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -48,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements ITransformer, ISh
         return getApplicationContext();
     }
 
-    public static final String TAG = "SAMSUNGPAY_APP";
+    public static final String TAG = "MAIN_ACTIVITY_SAMSUNG_PAY_APP";
 
     public static final String SPAY_SERVICE_ID = BuildConfig.SPAY_SERVICE_ID;
 
@@ -75,33 +76,18 @@ public class MainActivity extends AppCompatActivity implements ITransformer, ISh
         try {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_main);
-            //region Register receiver
-            LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(
-                    new OrderInitiatedReceived(),
-                    new IntentFilter("com.noonpay.sample.samsungPay.ORDER_INITIATED"));
-            LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(
-                    new PaymentInfoReceived(),
-                    new IntentFilter("com.noonpay.sample.samsungPay.PAYMENT_INFO"));
-            LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(
-                    new SamsungCardVerifiedReceived(),
-                    new IntentFilter("com.noonpay.sample.samsungPay.SAMSUNG_CARD_VERIFIED"));
-            LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(
-                    new AuthenticatedReceived(),
-                    new IntentFilter("com.noonpay.sample.samsungPay.ORDER_AUTHENTICATED"));
-            LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(
-                    new SaleReceived(),
-                    new IntentFilter("com.noonpay.sample.samsungPay.PAYMENT_SUCCEED"));
-            //endregion
+            registerReceivers();
             // samsung pay assert
             EnsureSamSungPayReady();
             final TextView item_no = findViewById(R.id.item_no);
             item_no.setText(String.format(Locale.ENGLISH, "%s-%s", "noon", System.currentTimeMillis()));
             final Button pay_button = findViewById(R.id.pay_button);
-            pay_button.setOnClickListener(this::OnPay_Click);
+            pay_button.setOnClickListener(this::onPay_Click);
 
             final EditText priceEdit = findViewById(R.id.price);
             //default value
             priceEdit.setText("10.0");
+            PrepareOrderFields(priceEdit.getText().toString());
             priceEdit.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -125,11 +111,15 @@ public class MainActivity extends AppCompatActivity implements ITransformer, ISh
 
     }
 
-    public void OnPay_Click(View view) {
-        final ProgressBar progressBar = findViewById(R.id.progressBar);
-        final Button pay_button = findViewById(R.id.pay_button);
+    @Override
+    protected void onDestroy() {
+        unRegisterReceivers();
+        super.onDestroy();
+    }
+
+    public void onPay_Click(View view) {
         try {
-            runOnUiThread(this::OnPayClickStart);
+            runOnUiThread(this::onPayClickStart);
             final String item_no = ((TextView) findViewById(R.id.item_no)).getText().toString();
             final Double item_price = Double.parseDouble(((TextView) findViewById(R.id.price)).getText().toString());
             try {
@@ -158,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements ITransformer, ISh
                                 intent.putExtra(Identifiers.ORDER_SUBMITTED, initiateOrder);
                                 LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
                                 //done samsung verification!
-                                //runOnUiThread(this::OnPayClickDone);
+                                //runOnUiThread(this::onPayClickDone);
                             });
                         }
                         , () -> showMessage("No supported card(S) exists!.")
@@ -167,18 +157,18 @@ public class MainActivity extends AppCompatActivity implements ITransformer, ISh
             } catch (Exception ex) {
                 showMessage(ex.getLocalizedMessage());
                 Log.e(TAG, ex.getMessage());
-                runOnUiThread(this::OnPayClickDone);
+                runOnUiThread(this::onPayClickDone);
             }
         } catch (Exception error) {
             error.printStackTrace(System.err);
             Log.e(TAG, error.getMessage());
-            runOnUiThread(this::OnPayClickDone);
+            runOnUiThread(this::onPayClickDone);
         } finally {
             Log.e(TAG, "On Pay click, finalized.");
         }
     }
 
-    public void OnPayClickDone() {
+    public void onPayClickDone() {
         final ProgressBar progressBar = findViewById(R.id.progressBar);
         final Button pay_button = findViewById(R.id.pay_button);
         runOnUiThread(() -> {
@@ -187,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements ITransformer, ISh
         });
     }
 
-    private void OnPayClickStart() {
+    private void onPayClickStart() {
         final ProgressBar progressBar = findViewById(R.id.progressBar);
         final Button pay_button = findViewById(R.id.pay_button);
         runOnUiThread(() -> {
@@ -196,6 +186,76 @@ public class MainActivity extends AppCompatActivity implements ITransformer, ISh
         });
     }
 
+    private void registerReceivers() {
+
+        //region Register receiver
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(
+                new OrderInitiatedReceived(),
+                new IntentFilter("com.noonpay.sample.samsungPay.ORDER_INITIATED"));
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(
+                new PaymentInfoReceived(),
+                new IntentFilter("com.noonpay.sample.samsungPay.PAYMENT_INFO"));
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(
+                new SamsungCardVerifiedReceived(),
+                new IntentFilter("com.noonpay.sample.samsungPay.SAMSUNG_CARD_VERIFIED"));
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(
+                new AuthenticatedReceived(),
+                new IntentFilter("com.noonpay.sample.samsungPay.ORDER_AUTHENTICATED"));
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(
+                new SaleReceived(),
+                new IntentFilter("com.noonpay.sample.samsungPay.PAYMENT_SUCCEED"));
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(
+                new OnErrorReceived(),
+                new IntentFilter("com.noonpay.sample.samsungPay.ERROR_RAISED"));
+        //endregion
+
+    }
+
+    private void unRegisterReceivers() {
+
+        //region Register receiver
+        LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(
+                new OrderInitiatedReceived());
+        LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(
+                new PaymentInfoReceived());
+        LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(
+                new SamsungCardVerifiedReceived());
+        LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(
+                new AuthenticatedReceived());
+        LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(
+                new SaleReceived());
+        LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(
+                new OnErrorReceived());
+        //endregion
+
+    }
+
+    // region OnError
+    public class OnErrorReceived extends BroadcastReceiver implements IShowMessage {
+        final static String TAG = "OnErrorReceived";
+        Context context;
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            this.context = context;
+            try {
+                String msg = intent.getStringExtra(Identifiers.ERROR_MSG);
+                msg = msg == null ? "Unexpected error occurred." : msg;
+                Log.i(TAG, "On Receive [On Error Received]: " + msg);
+                showMessage(msg);
+                onPayClickDone();
+            } finally {
+                LocalBroadcastManager.getInstance(context.getApplicationContext()).unregisterReceiver(this);
+            }
+        }
+
+        @Override
+        public Context getContext() {
+            return context;
+        }
+    }
+
+    //endregion
     //region Samsung Pay Helper
     private void InitializeCheckout(final Consumer<String> onCardSupport, final Runnable onNoCardSupport, final Runnable onFailed) {
         Bundle bundle = new Bundle();
@@ -251,7 +311,7 @@ public class MainActivity extends AppCompatActivity implements ITransformer, ISh
             public void onFailure(int errorCode, Bundle errorData) {
                 // Called when an error occurs during in-app cryptogram generation.
                 onFailed.run();
-                runOnUiThread(MainActivity.this::OnPayClickDone);
+                runOnUiThread(MainActivity.this::onPayClickDone);
             }
         }); // get Card Brand List
     }
@@ -285,27 +345,27 @@ public class MainActivity extends AppCompatActivity implements ITransformer, ISh
                 @Override
                 public void onFailure(int errorCode, Bundle errorData) {
                     showMessage("Samsung Pay, failed to respond!");
-                    runOnUiThread(MainActivity.this::OnPayClickDone);
+                    runOnUiThread(MainActivity.this::onPayClickDone);
                 }
             });
         } catch (NullPointerException e) {
             e.printStackTrace();
             showMessage("All mandatory fields cannot be null.");
-            runOnUiThread(MainActivity.this::OnPayClickDone);
+            runOnUiThread(MainActivity.this::onPayClickDone);
 
         } catch (IllegalStateException e) {
             e.printStackTrace();
             showMessage("IllegalStateException");
-            runOnUiThread(MainActivity.this::OnPayClickDone);
+            runOnUiThread(MainActivity.this::onPayClickDone);
 
         } catch (NumberFormatException e) {
             e.printStackTrace();
             showMessage("Amount values is not valid");
-            runOnUiThread(MainActivity.this::OnPayClickDone);
+            runOnUiThread(MainActivity.this::onPayClickDone);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
             showMessage("PaymentInfo values are not valid or all mandatory fields not set.");
-            runOnUiThread(MainActivity.this::OnPayClickDone);
+            runOnUiThread(MainActivity.this::onPayClickDone);
         }
     }
 
@@ -430,7 +490,7 @@ public class MainActivity extends AppCompatActivity implements ITransformer, ISh
                 new PaymentInfo.Builder();
 
         return paymentInfoBuilder
-                .setMerchantId("noon1010")
+                .setMerchantId("noonPay")
                 .setMerchantName("noon")
                 .setOrderNumber(item_no)
                 //TODO" review payment protocol

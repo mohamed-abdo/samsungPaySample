@@ -3,6 +3,7 @@ package com.noonpay.sample.samsungPay.Subscribers;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -27,22 +28,26 @@ public class PaymentInfoReceived extends BroadcastReceiver implements ITransform
     public void onReceive(Context context, Intent intent) {
         this.context = context;
         Log.i(TAG, "On Receive [Payment Info]");
-        PaymentInfo paymentInfo = intent.getParcelableExtra(Identifiers.PAYMENT_INFO);
-        if (paymentInfo !=null && paymentInfo.getResultCode() == 0) {
-            showMessage("Payment info added with Id: " + paymentInfo.getResult().getPaymentInfoId());
-            //preparing for authenticator
-            ProcessAuthentication authenticator = BuildAuthenticator(MainActivity.getBagValue(Identifiers.SPAY_PAYMENT_VERIFICATION_DATA),
-                    paymentInfo.getResult().getOrderId(),
-                    MainActivity.getBagValue(Identifiers.PAYMENT_METHOD),
-                    null);
-            HttpClientAsync httpClient = new HttpClientAsync(context);
+        try {
+            PaymentInfo paymentInfo = intent.getParcelableExtra(Identifiers.PAYMENT_INFO);
+            if (paymentInfo != null && paymentInfo.getResultCode() == 0) {
+                showMessage("Payment info added with Id: " + paymentInfo.getResult().getPaymentInfoId());
+                //preparing for authenticator
+                ProcessAuthentication authenticator = BuildAuthenticator(MainActivity.getBagValue(Identifiers.SPAY_PAYMENT_VERIFICATION_DATA),
+                        paymentInfo.getResult().getOrderId(),
+                        MainActivity.getBagValue(Identifiers.PAYMENT_METHOD),
+                        null);
+                HttpClientAsync httpClient = new HttpClientAsync(context);
 
-            TaskRequest taskRequest = new TaskRequest<>(authenticator,
-                    com.noonpay.sample.samsungPay.noonpayModels.Response.ProcessAuthentication.ProcessAuthentication.class);
+                TaskRequest taskRequest = new TaskRequest<>(authenticator,
+                        com.noonpay.sample.samsungPay.noonpayModels.Response.ProcessAuthentication.ProcessAuthentication.class);
 
-            httpClient.execute(taskRequest);
-        } else {
-            showMessage("Failed to add payment info!");
+                httpClient.execute(taskRequest);
+            } else {
+                showMessage("Failed to add payment info!");
+            }
+        } finally {
+            LocalBroadcastManager.getInstance(context.getApplicationContext()).unregisterReceiver(this);
         }
     }
 

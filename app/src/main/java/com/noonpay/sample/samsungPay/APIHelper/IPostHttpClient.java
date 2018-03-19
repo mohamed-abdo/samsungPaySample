@@ -30,7 +30,7 @@ public interface IPostHttpClient extends IShowMessage {
 
     String getHttpUrl();
 
-    default Object PostData(@NonNull final Object inModel, @NonNull final Class outType) {
+    default Object PostData(@NonNull final Object inModel, @NonNull final Class outType) throws Exception {
         final String TAG = "PostHttpClientHelper";
         final ITransformer transformer = ITransformResult();
         final ObjectMapper objectMapper = new ObjectMapper();
@@ -60,41 +60,30 @@ public interface IPostHttpClient extends IShowMessage {
                 result.append(line);
             }
             in.close();
-            try {
-                String jsonResult = result.toString();
-                JsonNode jsonNode = objectMapper.readTree(jsonResult);
-                switch (outType.getName()) {
-                    case "com.noonpay.sample.samsungPay.noonpayModels.Response.InitiateOrder.InitiateOrder": {
-                        return transformer.transformInitiateOrder(jsonNode);
-                    }
-                    case "com.noonpay.sample.samsungPay.noonpayModels.Response.PaymentInfo.PaymentInfo": {
-                        return transformer.transformPaymentInfo(jsonNode);
-                    }
-                    case "com.noonpay.sample.samsungPay.noonpayModels.Response.ProcessAuthentication.ProcessAuthentication":{
-                        return transformer.transformAuthenticationInfo(jsonNode);
-                    }
-                    case "com.noonpay.sample.samsungPay.noonpayModels.Response.Sale.Sale":{
-                        return transformer.transformSaleInfo(jsonNode);
-                    }
-                    default: {
-                        Log.d(TAG, "Unexpected outType");
-                        return transformer.transformResponse(jsonNode);
-                    }
+            String jsonResult = result.toString();
+            JsonNode jsonNode = objectMapper.readTree(jsonResult);
+            switch (outType.getName()) {
+                case "com.noonpay.sample.samsungPay.noonpayModels.Response.InitiateOrder.InitiateOrder": {
+                    return transformer.transformInitiateOrder(jsonNode);
                 }
-            } catch (JsonParseException error) {
-                Log.e(TAG, error.getMessage());
-                showMessage(error.getMessage());
-                return null;
-            } catch (JsonMappingException error) {
-                Log.e(TAG, error.getMessage());
-                showMessage(error.getMessage());
-                return null;
+                case "com.noonpay.sample.samsungPay.noonpayModels.Response.PaymentInfo.PaymentInfo": {
+                    return transformer.transformPaymentInfo(jsonNode);
+                }
+                case "com.noonpay.sample.samsungPay.noonpayModels.Response.ProcessAuthentication.ProcessAuthentication": {
+                    return transformer.transformAuthenticationInfo(jsonNode);
+                }
+                case "com.noonpay.sample.samsungPay.noonpayModels.Response.Sale.Sale": {
+                    return transformer.transformSaleInfo(jsonNode);
+                }
+                default: {
+                    Log.d(TAG, "Unexpected outType");
+                    return transformer.transformResponse(jsonNode);
+                }
             }
         } catch (Exception error) {
             error.printStackTrace(System.err);
             Log.e(TAG, error.getMessage());
-            showMessage(String.format("Error while post data to the api: %s", error.getMessage()));
-            return null;
+            throw new Exception(String.format("Error while post data to the api: %s", error.getMessage()));
         } finally {
             if (urlConnection != null)
                 urlConnection.disconnect();

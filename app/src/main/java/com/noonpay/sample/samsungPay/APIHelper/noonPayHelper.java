@@ -53,7 +53,7 @@ public class noonPayHelper implements InoonPayHttpHelper {
 
         try {
             JsonRequest jsonRequest = new JsonRequest<>(Request.Method.POST
-                    , BuildConfig.NOONPAY_ORDER_URL
+                    , BuildConfig.NOONPAY_ORDER_API
                     , InitiateOrder.class
                     , initiateOrder
                     , getAuthHeaders()
@@ -75,7 +75,7 @@ public class noonPayHelper implements InoonPayHttpHelper {
     public void AddPaymentInfo(com.noonpay.sample.samsungPay.noonpayModels.Request.PaymentInfo.PaymentInfo paymentInfo, Consumer<PaymentInfo> OnSuccess) {
         try {
             JsonRequest jsonRequest = new JsonRequest<>(Request.Method.POST
-                    , BuildConfig.NOONPAY_ORDER_URL
+                    , BuildConfig.NOONPAY_ORDER_API
                     , PaymentInfo.class
                     , paymentInfo
                     , getAuthHeaders()
@@ -83,7 +83,7 @@ public class noonPayHelper implements InoonPayHttpHelper {
                 PaymentInfo data = response;
                 OnSuccess.accept(data);
             }, error -> {
-                Log.e("InitiateOrder", error.toString());
+                Log.e("AddPaymentInfo", error.toString());
             });
             // Add the request to the RequestQueue.
             mRequestQueue.add(jsonRequest);

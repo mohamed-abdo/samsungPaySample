@@ -3,6 +3,7 @@ package com.noonpay.sample.samsungPay.Subscribers;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -26,14 +27,18 @@ public class SamsungCardVerifiedReceived extends BroadcastReceiver implements IT
     public void onReceive(Context context, Intent intent) {
         this.context = context;
         Log.i(TAG, "On Receive [Samsung verification]");
-        InitiateOrder initiateOrder = intent.getParcelableExtra(Identifiers.ORDER_SUBMITTED);
-        HttpClientAsync httpClient = new HttpClientAsync(context);
+        try {
+            InitiateOrder initiateOrder = intent.getParcelableExtra(Identifiers.ORDER_SUBMITTED);
+            HttpClientAsync httpClient = new HttpClientAsync(context);
 
-        TaskRequest taskRequest = new TaskRequest<>(initiateOrder,
-                com.noonpay.sample.samsungPay.noonpayModels.Response.InitiateOrder.InitiateOrder.class);
-        httpClient.execute(taskRequest);
+            TaskRequest taskRequest = new TaskRequest<>(initiateOrder,
+                    com.noonpay.sample.samsungPay.noonpayModels.Response.InitiateOrder.InitiateOrder.class);
+            httpClient.execute(taskRequest);
 
-       showMessage("Order submitted to noonPay! successfully/");
+            showMessage("Order submitted to noonPay! successfully/");
+        } finally {
+            LocalBroadcastManager.getInstance(context.getApplicationContext()).unregisterReceiver(this);
+        }
     }
 
     @Override

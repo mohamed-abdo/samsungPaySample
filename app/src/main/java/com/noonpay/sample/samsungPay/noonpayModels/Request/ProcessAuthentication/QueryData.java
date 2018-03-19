@@ -7,7 +7,7 @@ public class QueryData implements Parcelable {
     private String status;
     private String cardBrand;
     //TODO: change to last4_pan
-    private String last4_dpan;
+    private String last4Pan;
     private String data;
     private String dataType;
     private String dataVersion;
@@ -18,7 +18,7 @@ public class QueryData implements Parcelable {
     protected QueryData(Parcel in) {
         status = in.readString();
         cardBrand = in.readString();
-        last4_dpan = in.readString();
+        last4Pan = in.readString();
         data = in.readString();
         dataType = in.readString();
         dataVersion = in.readString();
@@ -29,7 +29,7 @@ public class QueryData implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(status);
         dest.writeString(cardBrand);
-        dest.writeString(last4_dpan);
+        dest.writeString(last4Pan);
         dest.writeString(data);
         dest.writeString(dataType);
         dest.writeString(dataVersion);
@@ -77,12 +77,12 @@ public class QueryData implements Parcelable {
         this.cardBrand = cardBrand;
     }
 
-    public String getLast4_dpan() {
-        return last4_dpan;
+    public String getLast4Pan() {
+        return last4Pan;
     }
 
-    public void setLast4_dpan(String last4_dpan) {
-        this.last4_dpan = last4_dpan;
+    public void setLast4Pan(String last4Pan) {
+        this.last4Pan = last4Pan;
     }
 
     public String getData() {

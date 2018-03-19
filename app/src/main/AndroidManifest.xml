@@ -9,7 +9,6 @@
         android:targetSdkVersion="26" />
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -23,7 +22,7 @@
             android:value="Y" />
         <meta-data
             android:name="spay_debug_api_key"
-            android:value="xxxxxxxxxxxxxxxxxxxxxxxx" />
+            android:value="xxxxxxxxxxxxxxxxxxxxxxxxx" />
         <meta-data
             android:name="spay_sdk_api_level"
             android:value="1.7" />
@@ -72,6 +71,13 @@
             </intent-filter>
         </receiver>
 
+        <receiver
+            android:name=".MainActivity$OnErrorReceived"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.noonpay.sample.samsungPay.ERROR_RAISED" />
+            </intent-filter>
+        </receiver>
         <activity
             android:name="com.noonpay.sample.samsungPay.OrderDetails"
             android:parentActivityName="com.noonpay.sample.samsungPay.MainActivity" />

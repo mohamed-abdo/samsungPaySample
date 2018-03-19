@@ -14,6 +14,6 @@ public interface InoonPayHttpHelper {
     }
 
     default String getOrderAPIUrl() {
-        return BuildConfig.NOONPAY_ORDER_URL;
+        return BuildConfig.NOONPAY_ORDER_API;
     }
 }

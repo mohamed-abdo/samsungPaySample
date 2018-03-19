@@ -154,8 +154,7 @@ public interface ITransformer {
         PaymentData paymentData = new PaymentData();
         paymentData.setMethod(paymentMethod);
         Data data = new Data();
-        //TODO: return url should be validated with the api!
-        data.setReturnUrl("https://portal.noonpayments.com/");
+        data.setReturnUrl("");
         paymentData.setData(data);
         paymentInfo.setOrder(order);
         paymentInfo.setPaymentData(paymentData);
@@ -190,7 +189,7 @@ public interface ITransformer {
         queryData.setDataType(jsonPayLoad.at("/3DS/type").asText());
         queryData.setDataVersion(jsonPayLoad.at("/3DS/version").asText());
         queryData.setCardBrand(jsonPayLoad.at("/payment_card_brand").asText());
-        queryData.setLast4_dpan(jsonPayLoad.at("/payment_last4_fpan").asText());
+        queryData.setLast4Pan(jsonPayLoad.at("/payment_last4_fpan").asText());
         queryData.setMerchantRef(jsonPayLoad.at("/merchant_ref").asText());
         data.setQueryData(queryData);
 

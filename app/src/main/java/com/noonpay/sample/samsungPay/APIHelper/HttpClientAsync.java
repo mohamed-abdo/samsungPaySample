@@ -8,13 +8,14 @@ import android.support.v4.content.LocalBroadcastManager;
 import com.noonpay.sample.samsungPay.MainActivity;
 import com.noonpay.sample.samsungPay.noonpayModels.Response.PaymentInfo.PaymentInfo;
 
+import java.net.URLDecoder;
 import java.util.ArrayList;
 
 /**
  * Created by abdo on 3/5/2018.
  */
 
-public class HttpClientAsync extends AsyncTask<TaskRequest, Void, Object>  {
+public class HttpClientAsync extends AsyncTask<TaskRequest, Void, Object> {
     private static final String TAG = "HttpClientAsync";
     private InoonPayHttpHelper inoonPayHttpHelper = new InoonPayHttpHelper() {
     };
@@ -56,7 +57,14 @@ public class HttpClientAsync extends AsyncTask<TaskRequest, Void, Object>  {
     @Override
     protected Object doInBackground(TaskRequest... taskRequests) {
         for (TaskRequest request : taskRequests) {
-            return httpClient.PostData(request.getModel(), request.getOutType());
+            try {
+                return httpClient.PostData(request.getModel(), request.getOutType());
+            } catch (Exception error) {
+                error.printStackTrace(System.err);
+                Intent intent = new Intent("com.noonpay.sample.samsungPay.ERROR_RAISED");
+                intent.putExtra(Identifiers.ERROR_MSG, error.getMessage());
+                LocalBroadcastManager.getInstance(context.get().getApplicationContext()).sendBroadcast(intent);
+            }
         }
         return null;
     }
@@ -72,7 +80,7 @@ public class HttpClientAsync extends AsyncTask<TaskRequest, Void, Object>  {
                     intent.setPackage("com.noonpay.sample.samsungPay");
                     intent.putExtra(Identifiers.ORDER_INITIATED, (com.noonpay.sample.samsungPay.noonpayModels.Response.InitiateOrder.InitiateOrder) response);
                     paymentEvents = MainActivity.getBagArrayValue(Identifiers.PAYMENT_EVENTS);
-                    if(paymentEvents==null)
+                    if (paymentEvents == null)
                         paymentEvents = new ArrayList<>();
                     paymentEvents.add(Identifiers.ORDER_INITIATED);
                     MainActivity.putBagArrayValue(Identifiers.PAYMENT_EVENTS, paymentEvents);
@@ -83,11 +91,11 @@ public class HttpClientAsync extends AsyncTask<TaskRequest, Void, Object>  {
                 case "com.noonpay.sample.samsungPay.noonpayModels.Response.PaymentInfo.PaymentInfo": {
                     Intent intent = new Intent("com.noonpay.sample.samsungPay.PAYMENT_INFO");
                     intent.setPackage("com.noonpay.sample.samsungPay");
-                    PaymentInfo paymentInfo= (com.noonpay.sample.samsungPay.noonpayModels.Response.PaymentInfo.PaymentInfo) response;
+                    PaymentInfo paymentInfo = (com.noonpay.sample.samsungPay.noonpayModels.Response.PaymentInfo.PaymentInfo) response;
                     intent.putExtra(Identifiers.PAYMENT_INFO, paymentInfo);
                     paymentEvents = MainActivity.getBagArrayValue(Identifiers.PAYMENT_EVENTS);
                     paymentEvents.add(Identifiers.PAYMENT_INFO);
-                    MainActivity.putBagValue(Identifiers.PAYMENT_METHOD,paymentInfo.getResult().getMethod());
+                    MainActivity.putBagValue(Identifiers.PAYMENT_METHOD, paymentInfo.getResult().getMethod());
                     MainActivity.putBagArrayValue(Identifiers.PAYMENT_EVENTS, paymentEvents);
                     LocalBroadcastManager.getInstance(context.get()).sendBroadcast(intent);
                     break;
