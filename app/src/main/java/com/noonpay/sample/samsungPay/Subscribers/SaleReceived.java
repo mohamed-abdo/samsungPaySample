@@ -53,8 +53,9 @@ public class SaleReceived extends BroadcastReceiver implements ITransformer, ISh
                 else
                     startActivity(context.getApplicationContext(), orderDetailsIntent, null);
             } else {
-                assert saleResponse != null;
-                showMessage("Failed to capture the order" + saleResponse.getMessage());
+                Intent errorIntent = new Intent("com.noonpay.sample.samsungPay.ERROR_RAISED");
+                intent.putExtra(Identifiers.ERROR_MSG, "Failed to capture the order" + saleResponse.getMessage());
+                LocalBroadcastManager.getInstance(context.getApplicationContext()).sendBroadcast(intent);
             }
         } finally {
             LocalBroadcastManager.getInstance(context.getApplicationContext()).unregisterReceiver(this);

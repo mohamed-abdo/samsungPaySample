@@ -508,5 +508,4 @@ public class MainActivity extends AppCompatActivity implements ITransformer, ISh
                 .build();
     }
     //endregion
-
 }

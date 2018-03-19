@@ -40,7 +40,9 @@ public class AuthenticatedReceived extends BroadcastReceiver implements ITransfo
 
                 httpClient.execute(taskRequest);
             } else {
-                showMessage("Failed to add payment info!");
+                Intent errorIntent = new Intent("com.noonpay.sample.samsungPay.ERROR_RAISED");
+                intent.putExtra(Identifiers.ERROR_MSG, "Failed to process authentication info!");
+                LocalBroadcastManager.getInstance(context.getApplicationContext()).sendBroadcast(intent);
             }
         } finally {
             LocalBroadcastManager.getInstance(context.getApplicationContext()).unregisterReceiver(this);

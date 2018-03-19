@@ -35,7 +35,7 @@ public class SamsungCardVerifiedReceived extends BroadcastReceiver implements IT
                     com.noonpay.sample.samsungPay.noonpayModels.Response.InitiateOrder.InitiateOrder.class);
             httpClient.execute(taskRequest);
 
-            showMessage("Order submitted to noonPay! successfully/");
+            showMessage("Order submitted to noonPay! successfully");
         } finally {
             LocalBroadcastManager.getInstance(context.getApplicationContext()).unregisterReceiver(this);
         }
