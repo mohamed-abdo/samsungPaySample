@@ -54,7 +54,7 @@ public class OrderInitiatedReceived extends BroadcastReceiver implements ITransf
             } else {
                 Intent errorIntent = new Intent("com.noonpay.sample.samsungPay.ERROR_RAISED");
                 intent.putExtra(Identifiers.ERROR_MSG, "Failed to initialize payment order!");
-                LocalBroadcastManager.getInstance(context.getApplicationContext()).sendBroadcast(intent);
+                LocalBroadcastManager.getInstance(context.getApplicationContext()).sendBroadcast(errorIntent);
             }
         } finally {
             LocalBroadcastManager.getInstance(context.getApplicationContext()).unregisterReceiver(this);

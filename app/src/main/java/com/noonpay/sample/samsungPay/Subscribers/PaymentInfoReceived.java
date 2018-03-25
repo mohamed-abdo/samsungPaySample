@@ -46,7 +46,7 @@ public class PaymentInfoReceived extends BroadcastReceiver implements ITransform
             } else {
                 Intent errorIntent = new Intent("com.noonpay.sample.samsungPay.ERROR_RAISED");
                 intent.putExtra(Identifiers.ERROR_MSG, "Failed to add payment info!");
-                LocalBroadcastManager.getInstance(context.getApplicationContext()).sendBroadcast(intent);
+                LocalBroadcastManager.getInstance(context.getApplicationContext()).sendBroadcast(errorIntent);
             }
         } finally {
             LocalBroadcastManager.getInstance(context.getApplicationContext()).unregisterReceiver(this);
