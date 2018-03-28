@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">noonpay samsung pay app</string>
+    <string name="app_name">noonpay samsungPay app</string>
     <!-- Titles -->
     <string name="sample_merchant">noonpay Merchant</string>
     <string name="amount">Total Amount</string>
