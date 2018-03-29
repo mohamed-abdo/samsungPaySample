@@ -1,13 +1,14 @@
 package com.noonpay.sample.samsungPay;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -24,6 +25,7 @@ import com.noonpay.sample.samsungPay.APIHelper.Identifiers;
 import com.noonpay.sample.samsungPay.Subscribers.AuthenticatedReceived;
 import com.noonpay.sample.samsungPay.Subscribers.OrderInitiatedReceived;
 import com.noonpay.sample.samsungPay.Subscribers.PaymentInfoReceived;
+import com.noonpay.sample.samsungPay.Subscribers.RefundReceived;
 import com.noonpay.sample.samsungPay.Subscribers.SaleReceived;
 import com.noonpay.sample.samsungPay.Subscribers.SamsungCardVerifiedReceived;
 import com.noonpay.sample.samsungPay.noonpayModels.Request.InitiateOrder.InitiateOrder;
@@ -43,7 +45,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 
-public class MainActivity extends AppCompatActivity implements ITransformer, IShowMessage {
+public class MainActivity extends Activity implements ITransformer, IShowMessage {
     @Override
     public Context getContext() {
         return getApplicationContext();
@@ -61,6 +63,14 @@ public class MainActivity extends AppCompatActivity implements ITransformer, ISh
 
     public synchronized static void putBagValue(String key, String value) {
         bag.putString(key, value);
+    }
+
+    public synchronized static Parcelable getBagParcelableValue(String key) {
+        return bag.getParcelable(key);
+    }
+
+    public synchronized static void putBagParcelableValue(String key, Parcelable value) {
+        bag.putParcelable(key, value);
     }
 
     public synchronized static ArrayList<String> getBagArrayValue(String key) {
@@ -86,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements ITransformer, ISh
 
             final EditText priceEdit = findViewById(R.id.price);
             //default value
-            priceEdit.setText("10.0");
+            priceEdit.setText("3.0");
             PrepareOrderFields(priceEdit.getText().toString());
             priceEdit.addTextChangedListener(new TextWatcher() {
                 @Override
@@ -205,6 +215,9 @@ public class MainActivity extends AppCompatActivity implements ITransformer, ISh
                 new SaleReceived(),
                 new IntentFilter("com.noonpay.sample.samsungPay.PAYMENT_SUCCEED"));
         LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(
+                new RefundReceived(),
+                new IntentFilter("com.noonpay.sample.samsungPay.REFUND_SUCCEED"));
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(
                 new OnErrorReceived(),
                 new IntentFilter("com.noonpay.sample.samsungPay.ERROR_RAISED"));
         //endregion
@@ -224,6 +237,8 @@ public class MainActivity extends AppCompatActivity implements ITransformer, ISh
                 new AuthenticatedReceived());
         LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(
                 new SaleReceived());
+        LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(
+                new RefundReceived());
         LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(
                 new OnErrorReceived());
         //endregion
@@ -265,8 +280,8 @@ public class MainActivity extends AppCompatActivity implements ITransformer, ISh
 
         paymentManager.requestCardInfo(new Bundle(), new PaymentManager.CardInfoListener() {
             /*
-            * This callback is received when the card information is received successfully.
-            */
+             * This callback is received when the card information is received successfully.
+             */
             @Override
             public void onResult(List<CardInfo> cardResponse) {
                 int visaCount = 0, mcCount = 0, amexCount = 0, dsCount = 0;
@@ -375,7 +390,7 @@ public class MainActivity extends AppCompatActivity implements ITransformer, ISh
 
     private Function<Double, Double> calcVAT = (price) -> price * .05;
 
-    private Function<Double, Double> calcShippingCost = (price) -> price < 10 ? 10.0 : 0;
+    private Function<Double, Double> calcShippingCost = (price) -> price >= 3 ? .0 : 1.0;
 
     private Function<Double, Double> calcTotalPrice = (price) -> price + calcVAT.apply(price) + calcShippingCost.apply(price);
 
@@ -385,7 +400,7 @@ public class MainActivity extends AppCompatActivity implements ITransformer, ISh
 
     private void EnsureSamSungPayReady() {
         final Button checkoutButton = (Button) findViewById(R.id.pay_button);
-
+        //this app use minsdk 24, so you can saftly remove the following check
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             checkoutButton.setEnabled(false);
             showMessage("You need to update your Operating system to able to use Samsung Pay!");
@@ -496,9 +511,9 @@ public class MainActivity extends AppCompatActivity implements ITransformer, ISh
                 //TODO" review payment protocol
                 .setPaymentProtocol(PaymentInfo.PaymentProtocol.PROTOCOL_3DS)
                 /* Include NEED_BILLING_SEND_SHIPPING option for AddressInPaymentSheet if merchant needs
-                * the billing address from Samsung Pay but wants to send the shipping address to Samsung Pay.
-                * Both billing and shipping address will be shown on the payment sheet.
-                */
+                 * the billing address from Samsung Pay but wants to send the shipping address to Samsung Pay.
+                 * Both billing and shipping address will be shown on the payment sheet.
+                 */
                 .setAddressInPaymentSheet(PaymentInfo.AddressInPaymentSheet.NEED_BILLING_SEND_SHIPPING)
                 .setShippingAddress(shippingAddress)
                 .setAllowedCardBrands(brandList)

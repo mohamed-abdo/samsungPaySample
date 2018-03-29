@@ -18,4 +18,7 @@ public final class Identifiers {
 
     public static final String PAYMENT_SUCCEED_INFO = "PAYMENT_SUCCEED_INFO";
     public static final String ERROR_MSG = "ERROR_MSG";
+    public static final String PAYMENT_SUCCEED_RESPONSE = "PAYMENT_SUCCEED_RESPONSE";
+    public static final String REFUND_SUCCEED="REFUND_SUCCEED";
+    public static final String REFUND_SUCCEED_INFO = "REFUND_SUCCEED_INFO";
 }

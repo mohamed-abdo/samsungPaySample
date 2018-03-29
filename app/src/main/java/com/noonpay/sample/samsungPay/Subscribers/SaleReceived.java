@@ -35,6 +35,7 @@ public class SaleReceived extends BroadcastReceiver implements ITransformer, ISh
         try {
             com.noonpay.sample.samsungPay.noonpayModels.Response.Sale.Sale saleResponse = intent.getParcelableExtra(Identifiers.PAYMENT_SUCCEED);
             if (saleResponse != null && saleResponse.getResultCode() == 0) {
+                MainActivity.putBagParcelableValue(Identifiers.PAYMENT_SUCCEED_RESPONSE, saleResponse);
                 showMessage("Order done successfully, authorization code: " + saleResponse.getResult().getAuthorizationCode());
                 // open order details on success!
                 Intent orderDetailsIntent = new Intent(context.getApplicationContext(), OrderDetails.class);
@@ -43,6 +44,7 @@ public class SaleReceived extends BroadcastReceiver implements ITransformer, ISh
                         add(String.format(Locale.ENGLISH, "Authorization code: %s", saleResponse.getResult().getAuthorizationCode()));
                         add(String.format(Locale.ENGLISH, "Captured amount: %s", saleResponse.getResult().getCapturedAmount()));
                         add(String.format(Locale.ENGLISH, "Order Id: %s", saleResponse.getResult().getOrderId()));
+                        add(String.format(Locale.ENGLISH, "Order Currency: %s", saleResponse.getResult().getCurrency()));
                         add(String.format(Locale.ENGLISH, "Transaction Id: %s", saleResponse.getResult().getTransactionId()));
                         add(String.format(Locale.ENGLISH, "Order status: %s", saleResponse.getResult().getStatus()));
                     }
@@ -54,7 +56,7 @@ public class SaleReceived extends BroadcastReceiver implements ITransformer, ISh
                     startActivity(context.getApplicationContext(), orderDetailsIntent, null);
             } else {
                 Intent errorIntent = new Intent("com.noonpay.sample.samsungPay.ERROR_RAISED");
-                intent.putExtra(Identifiers.ERROR_MSG, "Failed to capture the order" + saleResponse.getMessage());
+                intent.putExtra(Identifiers.ERROR_MSG, "Failed to capture the order" + (saleResponse == null ? "" : saleResponse.getMessage()));
                 LocalBroadcastManager.getInstance(context.getApplicationContext()).sendBroadcast(errorIntent);
             }
         } finally {

@@ -1,11 +1,22 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 26
+    lintOptions {
+        checkReleaseBuilds false
+    }
+    signingConfigs {
+        config {
+            keyAlias 'key-noonpay-samsungPay'
+            keyPassword 'P@ssw0rd1'
+            storeFile file('D:/app/noonpaykey.jks')
+            storePassword 'P@ssw0rd1'
+        }
+    }
+    compileSdkVersion 27
     defaultConfig {
-        applicationId 'com.noonpay.sample.samsungPay'
+        applicationId "com.noonpay.sample.samsungPay"
         minSdkVersion 24
-        targetSdkVersion 26
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -14,26 +25,29 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+
+            it.buildConfigField('String', 'SPAY_SERVICE_ID', '"xxxxxxxxxxxxxxxxxxxx"')
+            it.buildConfigField('String', 'NOONPAY_AUTH_SCHEME', '"KEY_LIVE"')
+            it.buildConfigField('String', 'NOONPAY_BUSINESS_ID', '"xxxxxxxxxxxx.samsungpay"')
+            it.buildConfigField('String', 'NOONPAY_KEY', '"xxxxxxxxxxxxxxxxx"')
+            it.buildConfigField('String', 'NOONPAY_ORDER_API', '"https://api.noonpayments.com/payment/v1/order"')
         }
-    }
-    buildTypes.each {
-        it.buildConfigField('String', 'SPAY_SERVICE_ID', '"xxxxxxxxxxxxxx"')
-        it.buildConfigField('String', 'NOONPAY_AUTH_SCHEME', '"KEY_TEST"')
-        it.buildConfigField('String', 'NOONPAY_BUSINESS_ID', '"xxxxxxxxx.xxxxxxxx"')
-        it.buildConfigField('String', 'NOONPAY_KEY', '"xxxxxxxxxxxxxxxxxxxxx"')
-        it.buildConfigField('String', 'NOONPAY_ORDER_API', '"https://api.noonpayments.com/payment/v1/order"')
+        debug {
+            signingConfig signingConfigs.config
+            it.buildConfigField('String', 'SPAY_SERVICE_ID', '"xxxxxxxxxxxxxx"')
+            it.buildConfigField('String', 'NOONPAY_AUTH_SCHEME', '"KEY_TEST"')
+            it.buildConfigField('String', 'NOONPAY_BUSINESS_ID', '"xxxxxxxxxxxxxx.samsungpay"')
+            it.buildConfigField('String', 'NOONPAY_KEY', '"xxxxxxxxxxxxxxxxxxxxxxxx"')
+            it.buildConfigField('String', 'NOONPAY_ORDER_API', '"https://api.noonpayments.com/payment/v1/order"')
+        }
     }
     compileOptions {
         targetCompatibility JavaVersion.VERSION_1_8
         sourceCompatibility JavaVersion.VERSION_1_8
     }
-    productFlavors {
-    }
-    buildToolsVersion '26.0.2'
-    dexOptions {
-    }
+    buildToolsVersion '27.0.3'
 }
-
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
@@ -46,9 +60,8 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-core:2.9.4'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.4'
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    implementation 'com.android.support:support-v4:27.1.0'
 }

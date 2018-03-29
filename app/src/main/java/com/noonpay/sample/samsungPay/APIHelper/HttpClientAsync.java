@@ -120,6 +120,16 @@ public class HttpClientAsync extends AsyncTask<TaskRequest, Void, Object> {
                     LocalBroadcastManager.getInstance(context.get()).sendBroadcast(intent);
                     break;
                 }
+                case "com.noonpay.sample.samsungPay.noonpayModels.Response.Refund.Refund": {
+                    Intent intent = new Intent("com.noonpay.sample.samsungPay.REFUND_SUCCEED");
+                    intent.setPackage("com.noonpay.sample.samsungPay");
+                    intent.putExtra(Identifiers.REFUND_SUCCEED, (com.noonpay.sample.samsungPay.noonpayModels.Response.Refund.Refund) response);
+                    paymentEvents = MainActivity.getBagArrayValue(Identifiers.PAYMENT_EVENTS);
+                    paymentEvents.add(Identifiers.REFUND_SUCCEED);
+                    MainActivity.putBagArrayValue(Identifiers.PAYMENT_EVENTS, paymentEvents);
+                    LocalBroadcastManager.getInstance(context.get()).sendBroadcast(intent);
+                    break;
+                }
             }
 
         }

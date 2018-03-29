@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.noonpay.sample.samsungPay.MainActivity"
+    tools:context=".MainActivity"
     tools:layout_editor_absoluteY="81dp">
 
     <TableLayout
@@ -38,7 +38,7 @@
 
                 <TextView
                     android:id="@+id/item_no"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="50dp"
                     android:layout_weight="1"
                     android:clickable="false"
@@ -79,8 +79,7 @@
                     android:gravity="bottom"
                     android:inputType="number"
                     android:labelFor="@+id/price"
-                    android:maxLength="7"
-                    android:textAlignment="viewEnd" />
+                    android:maxLength="7" />
 
             </LinearLayout>
         </TableRow>
@@ -111,8 +110,7 @@
                     android:layout_height="50dp"
                     android:gravity="bottom"
                     android:maxLength="7"
-                    android:text="@string/tax"
-                    android:textAlignment="viewEnd" />
+                    android:text="@string/tax" />
 
             </LinearLayout>
 
@@ -144,8 +142,7 @@
                     android:layout_height="50dp"
                     android:gravity="bottom"
                     android:maxLength="7"
-                    android:text="@string/shippingCost"
-                    android:textAlignment="viewEnd" />
+                    android:text="@string/shippingCost" />
 
             </LinearLayout>
         </TableRow>
@@ -172,7 +169,7 @@
 
                 <TextView
                     android:id="@+id/amount"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="50dp"
                     android:layout_weight="1"
                     android:clickable="false"
@@ -201,8 +198,8 @@
 
     <Button
         android:id="@+id/pay_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="127dp"
+        android:layout_height="43dp"
         android:layout_marginTop="36dp"
         android:onClick="onPay_Click"
         android:text="@string/pay_button"

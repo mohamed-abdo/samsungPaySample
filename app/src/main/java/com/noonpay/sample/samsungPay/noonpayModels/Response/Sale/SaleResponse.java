@@ -12,7 +12,8 @@ public class SaleResponse implements Parcelable{
     private String transactionId;
     private String status;
     private String authorizationCode;
-    private Double capturedAmount;
+    private double capturedAmount;
+    private String currency;
 
     public  SaleResponse(){
 
@@ -23,11 +24,8 @@ public class SaleResponse implements Parcelable{
         transactionId = in.readString();
         status = in.readString();
         authorizationCode = in.readString();
-        if (in.readByte() == 0) {
-            capturedAmount = null;
-        } else {
-            capturedAmount = in.readDouble();
-        }
+        capturedAmount = in.readDouble();
+        currency = in.readString();
     }
 
     @Override
@@ -36,12 +34,8 @@ public class SaleResponse implements Parcelable{
         dest.writeString(transactionId);
         dest.writeString(status);
         dest.writeString(authorizationCode);
-        if (capturedAmount == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeDouble(capturedAmount);
-        }
+        dest.writeDouble(capturedAmount);
+        dest.writeString(currency);
     }
 
     @Override
@@ -99,5 +93,13 @@ public class SaleResponse implements Parcelable{
 
     public void setCapturedAmount(Double capturedAmount) {
         this.capturedAmount = capturedAmount;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
     }
 }

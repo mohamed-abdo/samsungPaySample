@@ -75,6 +75,9 @@ public interface IPostHttpClient extends IShowMessage {
                 case "com.noonpay.sample.samsungPay.noonpayModels.Response.Sale.Sale": {
                     return transformer.transformSaleInfo(jsonNode);
                 }
+                case "com.noonpay.sample.samsungPay.noonpayModels.Response.Refund.Refund": {
+                    return transformer.transformRefundInfo(jsonNode);
+                }
                 default: {
                     Log.d(TAG, "Unexpected outType");
                     return transformer.transformResponse(jsonNode);

@@ -9,6 +9,8 @@ import com.noonpay.sample.samsungPay.noonpayModels.Request.PaymentInfo.Data;
 import com.noonpay.sample.samsungPay.noonpayModels.Request.PaymentInfo.PaymentData;
 import com.noonpay.sample.samsungPay.noonpayModels.Request.ProcessAuthentication.ProcessAuthentication;
 import com.noonpay.sample.samsungPay.noonpayModels.Request.ProcessAuthentication.QueryData;
+import com.noonpay.sample.samsungPay.noonpayModels.Request.Refund.Refund;
+import com.noonpay.sample.samsungPay.noonpayModels.Request.Refund.Transaction;
 import com.noonpay.sample.samsungPay.noonpayModels.Request.Sale.Sale;
 import com.noonpay.sample.samsungPay.noonpayModels.Response.GeneralResponse;
 import com.noonpay.sample.samsungPay.noonpayModels.Response.InitiateOrder.InitiateOrder;
@@ -17,6 +19,7 @@ import com.noonpay.sample.samsungPay.noonpayModels.Response.PaymentInfo.PaymentI
 import com.noonpay.sample.samsungPay.noonpayModels.Response.PaymentInfo.PaymentInfoResponse;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.noonpay.sample.samsungPay.noonpayModels.Response.ProcessAuthentication.ProcessAuthenticationResponse;
+import com.noonpay.sample.samsungPay.noonpayModels.Response.Refund.RefundResponse;
 import com.noonpay.sample.samsungPay.noonpayModels.Response.Sale.SaleResponse;
 
 import java.io.IOException;
@@ -53,11 +56,11 @@ public interface ITransformer {
 
         InitiateOrderResponse initiateOrderResponse = new InitiateOrderResponse();
         initiateOrderResponse.setOrderId(json.at("/result/order/id").asText());
-        ArrayList<JsonNode> options= new ArrayList<>();
+        ArrayList<JsonNode> options = new ArrayList<>();
         json.at("/result/paymentOptions").iterator().forEachRemaining(options::add);
-        ArrayList<String> methods=new ArrayList<>();
-        for(JsonNode o : options){
-            if(o.at("/action").asText().matches("(?i:SamsungPay)")){
+        ArrayList<String> methods = new ArrayList<>();
+        for (JsonNode o : options) {
+            if (o.at("/action").asText().matches("(?i:SamsungPay)")) {
                 methods.add(o.at("/method").asText());
             }
         }
@@ -119,14 +122,15 @@ public interface ITransformer {
         response.setMessage(json.at("/actionHint").asText());
         response.setMessage(json.at("/requestReference").asText());
 
-        SaleResponse authResponse = new SaleResponse();
-        authResponse.setOrderId(json.at("/result/order/id").asText());
-        authResponse.setStatus(json.at("/result/order/status").asText());
-        authResponse.setCapturedAmount(json.at("/result/order/totalCapturedAmount").asDouble());
-        authResponse.setTransactionId(json.at("/result/transaction/id").asText());
-        authResponse.setAuthorizationCode(json.at("/result/transaction/authorizationCode").asText());
+        SaleResponse saleResponse = new SaleResponse();
+        saleResponse.setOrderId(json.at("/result/order/id").asText());
+        saleResponse.setStatus(json.at("/result/order/status").asText());
+        saleResponse.setCurrency(json.at("/result/order/currency").asText());
+        saleResponse.setCapturedAmount(json.at("/result/order/totalCapturedAmount").asDouble());
+        saleResponse.setTransactionId(json.at("/result/transaction/id").asText());
+        saleResponse.setAuthorizationCode(json.at("/result/transaction/authorizationCode").asText());
 
-        response.setResult(authResponse);
+        response.setResult(saleResponse);
         return response;
     }
 
@@ -162,7 +166,7 @@ public interface ITransformer {
         return paymentInfo;
     }
 
-    default ProcessAuthentication BuildAuthenticator(@NonNull final String payLoad, @NonNull final String orderId,@NonNull final String method, final String extraData) {
+    default ProcessAuthentication BuildAuthenticator(@NonNull final String payLoad, @NonNull final String orderId, @NonNull final String method, final String extraData) {
         final ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonPayLoad = null;
         try {
@@ -179,7 +183,7 @@ public interface ITransformer {
         com.noonpay.sample.samsungPay.noonpayModels.Request.ProcessAuthentication.PaymentData paymentData =
                 new com.noonpay.sample.samsungPay.noonpayModels.Request.ProcessAuthentication.PaymentData();
         paymentData.setMethod(method);
-        com.noonpay.sample.samsungPay.noonpayModels.Request.ProcessAuthentication.Data data=
+        com.noonpay.sample.samsungPay.noonpayModels.Request.ProcessAuthentication.Data data =
                 new com.noonpay.sample.samsungPay.noonpayModels.Request.ProcessAuthentication.Data();
         data.setMethod(jsonPayLoad.at("/method").asText());
         QueryData queryData =
@@ -209,6 +213,50 @@ public interface ITransformer {
 
         saleRequest.setOrder(order);
         return saleRequest;
+    }
+
+    default Refund BuildRefundRequest(
+            @NonNull final String orderId,
+            @NonNull final double amount,
+            @NonNull final String currency,
+            @NonNull final String targetTransactionId
+    ) {
+        Refund refundRequest = new Refund();
+        refundRequest.setApiOperation("REFUND");
+        com.noonpay.sample.samsungPay.noonpayModels.Request.Refund.Order order =
+                new com.noonpay.sample.samsungPay.noonpayModels.Request.Refund.Order();
+        order.setId(orderId);
+
+        Transaction transaction=new Transaction();
+        transaction.setAmount(amount);
+        transaction.setCurrency(currency);
+        transaction.setTargetTransactionId(targetTransactionId);
+
+        refundRequest.setTransaction(transaction);
+        refundRequest.setOrder(order);
+        return refundRequest;
+    }
+
+    default com.noonpay.sample.samsungPay.noonpayModels.Response.Refund.Refund transformRefundInfo(JsonNode json){
+        com.noonpay.sample.samsungPay.noonpayModels.Response.Refund.Refund response
+                = new com.noonpay.sample.samsungPay.noonpayModels.Response.Refund.Refund();
+        response.setResultCode(json.at("/resultCode").asInt());
+        response.setMessage(json.at("/message").asText());
+        response.setResultClass(json.at("/resultClass").asText());
+        response.setMessage(json.at("/classDescription").asText());
+        response.setMessage(json.at("/actionHint").asText());
+        response.setMessage(json.at("/requestReference").asText());
+
+        RefundResponse refundResponse = new RefundResponse();
+        refundResponse.setOrderId(json.at("/result/order/id").asText());
+        refundResponse.setAuthorizationCode(json.at("/result/transaction/authorizationCode").asText());
+        refundResponse.setStatus(json.at("/result/order/status").asText());
+        refundResponse.setCurrency(json.at("/result/order/currency").asText());
+        refundResponse.setTransactionId(json.at("/result/transaction/id").asText());
+        refundResponse.setTotalRefundedAmount(json.at("/result/order/totalRefundedAmount").asDouble());
+        refundResponse.setTotalSalesAmount(json.at("/result/order/totalSalesAmount").asDouble());
+        response.setResult(refundResponse);
+        return response;
     }
 }
 
