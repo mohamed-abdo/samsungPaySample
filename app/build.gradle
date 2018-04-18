@@ -5,12 +5,7 @@ android {
         checkReleaseBuilds false
     }
     signingConfigs {
-        config {
-            keyAlias 'key-noonpay-samsungPay'
-            keyPassword 'P@ssw0rd1'
-            storeFile file('D:/app/noonpaykey.jks')
-            storePassword 'P@ssw0rd1'
-        }
+
     }
     compileSdkVersion 27
     defaultConfig {
@@ -25,20 +20,18 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.config
 
-            it.buildConfigField('String', 'SPAY_SERVICE_ID', '"xxxxxxxxxxxxxxxxxxxx"')
+            it.buildConfigField('String', 'SPAY_SERVICE_ID', '"0b58b1bdcefa481fa99dc7"')
             it.buildConfigField('String', 'NOONPAY_AUTH_SCHEME', '"KEY_LIVE"')
-            it.buildConfigField('String', 'NOONPAY_BUSINESS_ID', '"xxxxxxxxxxxx.samsungpay"')
-            it.buildConfigField('String', 'NOONPAY_KEY', '"xxxxxxxxxxxxxxxxx"')
+            it.buildConfigField('String', 'NOONPAY_BUSINESS_ID', '"noonpayments.samsungpay"')
+            it.buildConfigField('String', 'NOONPAY_KEY', '"d9d4ce67a5c64ceda643a9377afc1f84"')
             it.buildConfigField('String', 'NOONPAY_ORDER_API', '"https://api.noonpayments.com/payment/v1/order"')
         }
         debug {
-            signingConfig signingConfigs.config
-            it.buildConfigField('String', 'SPAY_SERVICE_ID', '"xxxxxxxxxxxxxx"')
+            it.buildConfigField('String', 'SPAY_SERVICE_ID', '"0b58b1bdcefa481fa99dc7"')
             it.buildConfigField('String', 'NOONPAY_AUTH_SCHEME', '"KEY_TEST"')
-            it.buildConfigField('String', 'NOONPAY_BUSINESS_ID', '"xxxxxxxxxxxxxx.samsungpay"')
-            it.buildConfigField('String', 'NOONPAY_KEY', '"xxxxxxxxxxxxxxxxxxxxxxxx"')
+            it.buildConfigField('String', 'NOONPAY_BUSINESS_ID', '"noonpayments.samsungpay"')
+            it.buildConfigField('String', 'NOONPAY_KEY', '"af2158197bab4f038d45976b625b8941"')
             it.buildConfigField('String', 'NOONPAY_ORDER_API', '"https://api.noonpayments.com/payment/v1/order"')
         }
     }
